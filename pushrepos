@@ -39,7 +39,10 @@ enum_and_push() {
         readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
 	for maybe_git in "${maybe_gits[@]}"
 	do
-		[[ ! -e "$maybe_git/.git" ]] && continue
+		if [[ ! -e "$maybe_git/.git" ]]; then
+                    echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to push..."
+                    continue
+                fi
 		echo "${AQUA}[+] ${RESET}Pushing to $maybe_git..."
 		git -C $maybe_git add -A .
 		git -C $maybe_git commit -m "$universal_commit_msg"
