@@ -24,35 +24,35 @@
 #
 
 if ! command -v tput &> /dev/null; then
-        AQUA=""
-	ORANGE=""
-	RESET=""
+    AQUA=""
+    ORANGE=""
+    RESET=""
 else
-	AQUA=$(tput setaf 45)
-	ORANGE=$(tput setaf 214)
-	RESET=$(tput sgr0)
+    AQUA=$(tput setaf 45)
+    ORANGE=$(tput setaf 214)
+    RESET=$(tput sgr0)
 fi
 
 enum_and_push() { 
-	universal_commit_msg=$2
-	[[ -z $2 ]] && universal_commit_msg="General changes"
-        readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
-	for maybe_git in "${maybe_gits[@]}"
-	do
-		if [[ ! -e "$maybe_git/.git" ]]; then
-                    echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to push..."
-                    continue
-                fi
-		echo "${AQUA}[+] ${RESET}Pushing to $maybe_git..."
-		git -C $maybe_git add -A .
-		git -C $maybe_git commit -m "$universal_commit_msg"
-		git -C $maybe_git push
-		echo "${AQUA}[+] ${RESET}Push of $maybe_git done."
-	done
+    universal_commit_msg=$2
+    [[ -z $2 ]] && universal_commit_msg="General changes"
+    readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
+    for maybe_git in "${maybe_gits[@]}"
+    do
+        if [[ ! -e "$maybe_git/.git" ]]; then
+            echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to push..."
+            continue
+        fi
+        echo "${AQUA}[+] ${RESET}Pushing to $maybe_git..."
+        git -C "$maybe_git" add -A .
+        git -C "$maybe_git" commit -m "$universal_commit_msg"
+        git -C "$maybe_git" push
+        echo "${AQUA}[+] ${RESET}Push of $maybe_git done."
+    done
 }
 
 if [[ -z $1 ]]; then
-        echo "${ORANGE}[!] ${RESET}Specify git directory containing all repositories and, optionally, a universal commit message."
+    echo "${ORANGE}[!] ${RESET}Specify git directory containing all repositories and, optionally, a universal commit message."
 else
-        enum_and_push $1 "$2"
+    enum_and_push "$1" "$2"
 fi
